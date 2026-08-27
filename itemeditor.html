@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tabuk Trading - Item Editor</title>
+
+<style>
+:root{
+  --green:#8CCB40;
+  --dark:#111;
+  --panel:#fff;
+  --border:#d9d9d9;
+
+  /* A4 working canvas */
+  --poster-w:794px;
+  --poster-h:1123px;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+  min-height:100%;
+}
+
+body{
+  min-height:100vh;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#eef2ee;
+  color:#111;
+}
+
+/* ============================================================
+   APP
+   ============================================================ */
+
+.app{
+  display:grid;
+  grid-template-columns:1fr;
+  min-height:100vh;
+}
+
+/* ============================================================
+   EDITOR
+   ============================================================ */
+
+.editor{
+  display:none;
+  background:#fff;
+  padding:22px;
+  border-right:1px solid #ddd;
+  overflow:auto;
+  position:sticky;
+  top:0;
+  height:100vh;
+  z-index:1000;
+}
+
+.editor.editor-open{
+  display:block;
+}
+
+.editor h1{
+  margin:0 0 5px;
+  font-size:23px;
+}
+
+.editor .sub{
+  margin:0 0 18px;
+  color:#666;
+  font-size:13px;
+}
+
+.group{
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:13px;
+}
+
+.group h2{
+  font-size:14px;
+  margin:0 0 12px;
+}
+
+label{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  margin:10px 0 5px;
+}
+
+input[type=text],
+input[type=color]{
+  width:100%;
+  height:42px;
+  border:1px solid #ccc;
+  border-radius:9px;
+  padding:0 11px;
+  font-size:14px;
+  outline:none;
+}
+
+input[type=color]{
+  padding:4px;
+  cursor:pointer;
+}
+
+.file{
+  width:100%;
+  padding:10px;
+  border:1px dashed #bbb;
+  border-radius:9px;
+  background:#fafafa;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+
+button{
+  border:0;
+  border-radius:10px;
+  padding:12px 14px;
+  font-weight:700;
+  cursor:pointer;
+  font-size:13px;
+}
+
+button:active{
+  transform:translateY(1px);
+}
+
+.btn-green{
+  background:var(--green);
+  color:#111;
+}
+
+.btn-dark{
+  background:#111;
+  color:#fff;
+}
+
+.btn-light{
+  background:#eee;
+  color:#111;
+}
+
+.btn-red{
+  background:#ef4444;
+  color:#fff;
+}
+
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
+
+.note{
+  font-size:11px;
+  line-height:1.45;
+  color:#666;
+  margin-top:9px;
+}
+
+/* ============================================================
+   OPEN / CLOSE EDITOR
+   ============================================================ */
+
+.open-editor-btn{
+  position:fixed;
+  top:18px;
+  left:18px;
+  z-index:9999;
+  background:#111;
+  color:#fff;
+  border:0;
+  border-radius:10px;
+  padding:12px 18px;
+  font-size:14px;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 5px 18px rgba(0,0,0,.22);
+}
+
+.open-editor-btn:hover{
+  transform:translateY(-1px);
+}
+
+.close-editor{
+  position:absolute;
+  top:15px;
+  right:15px;
+  width:36px;
+  height:36px;
+  padding:0;
+  border-radius:50%;
+  background:#111;
+  color:#fff;
+  font-size:20px;
+  line-height:36px;
+}
+
+/* ============================================================
+   PREVIEW
+   ============================================================ */
+
+.preview-area{
+  padding:25px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  overflow:auto;
+  min-width:0;
+}
+
+.preview-wrap{
+  width:794px;
+  flex:0 0 794px;
+}
+
+.preview-title{
+  text-align:center;
+  margin:0 0 12px;
+  font-size:14px;
+  color:#666;
+}
+
+/* ============================================================
+   POSTER
+   EXACT A4 WORKING SIZE
+   ============================================================ */
+
+#poster{
+  width:794px;
+  height:1123px;
+  background:var(--green);
+  position:relative;
+  overflow:hidden;
+  transform-origin:top left;
+  border-radius:0;
+  box-shadow:0 18px 45px rgba(0,0,0,.18);
+}
+
+/* ============================================================
+   WHITE INNER CARD
+   ============================================================ */
+
+.poster-inner{
+  position:absolute;
+  left:46px;
+  top:43px;
+  width:702px;
+  height:1037px;
+  background:#fff;
+  border-radius:28px;
+  overflow:hidden;
+}
+
+/* ============================================================
+   LOGO
+   ============================================================ */
+
+.logo{
+  position:absolute;
+  left:28px;
+  top:12px;
+  width:100px;
+  height:80px;
+  object-fit:contain;
+  object-position:center center;
+  display:block;
+}
+
+/* ============================================================
+   COMPANY NAME
+   ============================================================ */
+
+.company{
+  position:absolute;
+  left:150px;
+  top:14px;
+  width:455px;
+  height:76px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  text-align:center;
+
+  font-family:Impact,"Arial Narrow",Arial,sans-serif;
+  font-size:60px;
+  line-height:1;
+  font-weight:500;
+  letter-spacing:-1.2px;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:clip;
+
+  color:#000;
+}
+
+/* ============================================================
+   DOTS
+   ============================================================ */
+
+.dots{
+  position:absolute;
+  right:35px;
+  top:55px;
+  font-size:36px;
+  font-weight:900;
+  line-height:25px;
+  color:#111;
+  transform:scaleX(.72);
+}
+
+/* ============================================================
+   PRODUCT IMAGE
+
+   IMPORTANT:
+   This rectangle is the SINGLE source of truth.
+
+   Preview:
+      left = 58
+      top  = 111
+      width = 586
+      height = 745
+
+   Export:
+      converted to absolute canvas coordinates:
+      left = 46 + 58 = 104
+      top  = 43 + 111 = 154
+
+   The JavaScript uses the exact same rectangle.
+   ============================================================ */
+
+.main-image{
+  position:absolute;
+
+  left:58px;
+  top:111px;
+
+  width:586px;
+  height:745px;
+
+  display:block;
+
+  /*
+    contain = NEVER crop the product.
+    The complete product remains visible.
+  */
+  object-fit:contain;
+  object-position:center center;
+
+  /*
+    Transparent background is important for PNG products.
+  */
+  background:transparent;
+
+  /*
+    No CSS padding.
+    Padding would make preview/export calculations different.
+  */
+  padding:0;
+
+  /*
+    Prevent accidental stretching.
+  */
+  max-width:none;
+  max-height:none;
+}
+
+/* ============================================================
+   GREEN BADGE
+   ============================================================ */
+
+.badge{
+  position:absolute;
+
+  left:128px;
+  top:885px;
+
+  width:446px;
+  height:125px;
+
+  background:var(--green);
+
+  border-radius:70px;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+
+  text-align:center;
+
+  color:#000;
+
+  font-family:Arial,Helvetica,sans-serif;
+  font-weight:800;
+
+  z-index:10;
+}
+
+.badge .line1{
+  font-size:36px;
+  line-height:42px;
+}
+
+.badge .line2{
+  font-size:36px;
+  line-height:42px;
+}
+
+/* ============================================================
+   HIDDEN EXPORT HELPERS
+   ============================================================ */
+
+.export-only-hidden{
+  display:none;
+}
+
+/* ============================================================
+   DESKTOP EDITOR
+   ============================================================ */
+
+@media(min-width:1001px){
+
+  .app:has(.editor.editor-open){
+    grid-template-columns:minmax(310px,380px) 1fr;
+  }
+
+  .app:has(.editor.editor-open) .preview-area{
+    min-width:0;
+  }
+
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media(max-width:1000px){
+
+  .editor{
+    position:relative;
+    height:auto;
+    border-right:0;
+    border-bottom:1px solid #ddd;
+  }
+
+  .editor.editor-open{
+    display:block;
+  }
+
+  .preview-area{
+    padding:15px;
+    overflow:auto;
+  }
+
+}
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+
+@media print{
+
+  @page{
+    size:A4 portrait;
+    margin:0;
+  }
+
+  html,
+  body{
+    width:210mm;
+    height:297mm;
+    background:#fff!important;
+  }
+
+  body{
+    margin:0;
+  }
+
+  .editor,
+  .open-editor-btn{
+    display:none!important;
+  }
+
+  .preview-area{
+    display:block!important;
+    padding:0!important;
+    margin:0!important;
+    overflow:visible!important;
+  }
+
+  .preview-wrap{
+    width:794px!important;
+    height:1123px!important;
+    margin:0!important;
+  }
+
+  #poster{
+    width:794px!important;
+    height:1123px!important;
+    transform:none!important;
+    box-shadow:none!important;
+  }
+}
+
+.download-ready{
+  margin-top:10px;
+  padding:9px 10px;
+  border-radius:9px;
+  background:#f3f8ed;
+  color:#31520f;
+  font-size:11px;
+  line-height:1.4;
+  border:1px solid #dceacb;
+}
+button:disabled{
+  opacity:.65;
+  cursor:wait;
+}
+
+</style>
+</head>
+
+<body>
+
+<button id="openEditor" class="open-editor-btn">✎ EDIT</button>
+
+<div class="app">
+
+  <!-- ========================================================
+       EDITOR
+       ======================================================== -->
+
+  <aside class="editor" id="editorPanel">
+
+    <button
+      id="closeEditor"
+      class="close-editor"
+      title="Close Editor"
+      type="button"
+    >×</button>
+
+    <div class="group">
+
+      <h2>Company / Header</h2>
+
+      <label>Company Name</label>
+
+      <input
+        id="companyInput"
+        type="text"
+        value="TABUK TRADING"
+      >
+
+      <label>Logo Image</label>
+
+      <input
+        id="logoInput"
+        class="file"
+        type="file"
+        accept="image/*"
+      >
+
+      <label>Poster Green</label>
+
+      <input
+        id="greenInput"
+        type="color"
+        value="#8CCB40"
+      >
+
+    </div>
+
+    <div class="group">
+
+      <h2>Product Information</h2>
+
+      <label>Product Code</label>
+
+      <input
+        id="codeInput"
+        type="text"
+        value="HO-780-6G"
+      >
+
+      <label>Carton / Quantity Text</label>
+
+      <input
+        id="qtyInput"
+        type="text"
+        value="12PCS/CTN"
+      >
+
+    </div>
+
+    <div class="group">
+
+      <h2>Product Image</h2>
+
+      <input
+        id="productInput"
+        class="file"
+        type="file"
+        accept="image/*"
+      >
+
+    </div>
+
+    <div class="group">
+
+      <h2>Export</h2>
+
+      <div class="actions">
+
+        <button
+          class="btn-green"
+          id="downloadPng"
+          type="button"
+        >
+          ⬇ Download Image
+        </button>
+
+        <button
+          class="btn-dark"
+          id="downloadPdf"
+          type="button"
+        >
+          ⬇ Download PDF
+        </button>
+
+        <!-- <button
+          class="btn-light"
+          id="printBtn"
+          type="button"
+        >
+          🖨 Print
+        </button> -->
+
+        <button
+          class="btn-red"
+          id="resetBtn"
+          type="button"
+        >
+          ↺ Reset
+        </button>
+  
+      </div>
+
+ 
+    </div>
+
+  </aside>
+
+  <!-- ========================================================
+       PREVIEW
+       ======================================================== -->
+
+  <main class="preview-area">
+
+    <div class="preview-wrap">
+
+      <div id="poster">
+
+        <div class="poster-inner">
+
+          <img
+            id="logoImg"
+            class="logo"
+            alt="Logo"
+          >
+
+          <div
+            id="companyText"
+            class="company"
+          >
+            TABUK TRADING
+          </div>
+
+          <div class="dots">⋮</div>
+
+          <img
+            id="productImg"
+            class="main-image"
+            alt="Product"
+          >
+
+          <div class="badge">
+
+            <div
+              id="codeText"
+              class="line1"
+            >
+              HO-780-6G
+            </div>
+
+            <div
+              id="qtyText"
+              class="line2"
+            >
+              12PCS/CTN
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+
+
+/* ============================================================
+   ROBUST IMAGE + DOWNLOAD HELPERS
+   ============================================================ */
+
+function waitForImage(img){
+  return new Promise(resolve => {
+    if(img && img.complete && img.naturalWidth > 0){
+      resolve(true);
+      return;
+    }
+    if(!img){
+      resolve(false);
+      return;
+    }
+    const done = () => {
+      img.removeEventListener("load", done);
+      img.removeEventListener("error", done);
+      resolve(img.naturalWidth > 0);
+    };
+    img.addEventListener("load", done, {once:true});
+    img.addEventListener("error", done, {once:true});
+  });
+}
+
+function downloadBlob(blob, filename){
+  if(!blob) throw new Error("Could not create the download file.");
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.style.display = "none";
+  document.body.appendChild(a);
+
+  // A real user click works more reliably than relying on a synthetic click
+  // from an unattached anchor.
+  a.click();
+
+  setTimeout(() => {
+    a.remove();
+    URL.revokeObjectURL(url);
+  }, 1500);
+}
+
+function canvasToBlob(canvas, type, quality){
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => {
+      if(blob) resolve(blob);
+      else reject(new Error("Canvas export failed."));
+    }, type, quality);
+  });
+}
+
+function fileToDataURL(file){
+  return new Promise((resolve, reject) => {
+    if(!file){
+      reject(new Error("No image selected."));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Could not read the selected image."));
+    reader.readAsDataURL(file);
+  });
+}
+
+/*
+  Draw an image completely inside a box.
+  This is also used for the export, so preview and downloaded files
+  use the same aspect-ratio rule.
+*/
+function drawContainSync(ctx, img, x, y, w, h){
+  if(!img || !img.naturalWidth || !img.naturalHeight) return;
+
+  const scale = Math.min(
+    w / img.naturalWidth,
+    h / img.naturalHeight
+  );
+
+  const dw = img.naturalWidth * scale;
+  const dh = img.naturalHeight * scale;
+
+  ctx.drawImage(
+    img,
+    x + (w - dw) / 2,
+    y + (h - dh) / 2,
+    dw,
+    dh
+  );
+}
+
+
+/* ============================================================
+   DEFAULT IMAGES
+
+   These are your original embedded images.
+   ============================================================ */
+
+const DEFAULT_LOGO = "TABUK.jpeg";
+const DEFAULT_PRODUCT = "Default.png";
+
+/*
+  IMPORTANT:
+  The original file contains very large embedded base64 images.
+  If your original complete base64 strings are still present,
+  keep them exactly as they are.
+
+  The strings above are intentionally referenced as the defaults
+  used by the application.
+*/
+
+
+/* ============================================================
+   DOM REFERENCES
+   ============================================================ */
+
+const poster =
+  document.getElementById("poster");
+
+const posterInner =
+  document.querySelector(".poster-inner");
+
+const editorPanel =
+  document.getElementById("editorPanel");
+
+const openEditor =
+  document.getElementById("openEditor");
+
+const closeEditor =
+  document.getElementById("closeEditor");
+
+const companyInput =
+  document.getElementById("companyInput");
+
+const logoInput =
+  document.getElementById("logoInput");
+
+const greenInput =
+  document.getElementById("greenInput");
+
+const codeInput =
+  document.getElementById("codeInput");
+
+const qtyInput =
+  document.getElementById("qtyInput");
+
+const productInput =
+  document.getElementById("productInput");
+
+const logoImg =
+  document.getElementById("logoImg");
+
+const productImg =
+  document.getElementById("productImg");
+
+const companyText =
+  document.getElementById("companyText");
+
+const codeText =
+  document.getElementById("codeText");
+
+const qtyText =
+  document.getElementById("qtyText");
+
+
+/* ============================================================
+   EXACT POSTER GEOMETRY
+
+   All preview and export positioning comes from these values.
+   ============================================================ */
+
+const POSTER = {
+  width:794,
+  height:1123
+};
+
+const INNER = {
+  x:46,
+  y:43,
+  width:702,
+  height:1037,
+  radius:28
+};
+
+/*
+  Product rectangle relative to .poster-inner.
+*/
+const PRODUCT_BOX = {
+  x:58,
+  y:111,
+  width:586,
+  height:745
+};
+
+/*
+  Convert inner-card coordinates to full poster coordinates.
+*/
+const PRODUCT_CANVAS_BOX = {
+  x:INNER.x + PRODUCT_BOX.x,
+  y:INNER.y + PRODUCT_BOX.y,
+  width:PRODUCT_BOX.width,
+  height:PRODUCT_BOX.height
+};
+
+
+/* ============================================================
+   IMAGE FITTING HELPERS
+   ============================================================ */
+
+/*
+  Returns the exact dimensions needed to contain an image
+  inside a box while preserving its original aspect ratio.
+
+  This is the SAME algorithm used for export.
+*/
+function getContainRect(
+  imageWidth,
+  imageHeight,
+  boxX,
+  boxY,
+  boxWidth,
+  boxHeight
+){
+
+  if(
+    !imageWidth ||
+    !imageHeight ||
+    !boxWidth ||
+    !boxHeight
+  ){
+    return {
+      x:boxX,
+      y:boxY,
+      width:boxWidth,
+      height:boxHeight
+    };
+  }
+
+  const imageRatio =
+    imageWidth / imageHeight;
+
+  const boxRatio =
+    boxWidth / boxHeight;
+
+  let width;
+  let height;
+
+  if(imageRatio > boxRatio){
+
+    /*
+      Image is wider.
+      Fit to width.
+    */
+    width = boxWidth;
+    height = width / imageRatio;
+
+  }else{
+
+    /*
+      Image is taller.
+      Fit to height.
+    */
+    height = boxHeight;
+    width = height * imageRatio;
+
+  }
+
+  return {
+    x:boxX + (boxWidth - width) / 2,
+    y:boxY + (boxHeight - height) / 2,
+    width,
+    height
+  };
+}
+
+
+/*
+  Draw image using the exact contain algorithm.
+*/
+function drawImageContain(
+  ctx,
+  img,
+  x,
+  y,
+  width,
+  height
+){
+
+  return new Promise(resolve => {
+
+    const draw = () => {
+
+      if(
+        !img ||
+        !img.naturalWidth ||
+        !img.naturalHeight
+      ){
+        resolve();
+        return;
+      }
+
+      const rect =
+        getContainRect(
+          img.naturalWidth,
+          img.naturalHeight,
+          x,
+          y,
+          width,
+          height
+        );
+
+      ctx.drawImage(
+        img,
+        rect.x,
+        rect.y,
+        rect.width,
+        rect.height
+      );
+
+      resolve();
+
+    };
+
+    if(
+      img.complete &&
+      img.naturalWidth
+    ){
+      draw();
+    }else{
+
+      img.onload = draw;
+
+      img.onerror = () => {
+        resolve();
+      };
+
+    }
+
+  });
+}
+
+
+/* ============================================================
+   UPDATE UI
+   ============================================================ */
+
+function updateText(){
+
+  companyText.textContent =
+    companyInput.value || "TABUK TRADING";
+
+  codeText.textContent =
+    codeInput.value || "HO-780-6G";
+
+  qtyText.textContent =
+    qtyInput.value || "12PCS/CTN";
+
+}
+
+function updateGreen(){
+
+  const color =
+    greenInput.value || "#8CCB40";
+
+  document.documentElement.style
+    .setProperty("--green",color);
+
+}
+
+
+/* ============================================================
+   FILE READER
+   ============================================================ */
+
+function loadFileToImage(file, img){
+  if(!file) return;
+
+  const objectUrl = URL.createObjectURL(file);
+
+  // Revoke the temporary object URL after the image has decoded.
+  img.onload = () => {
+    URL.revokeObjectURL(objectUrl);
+  };
+
+  img.onerror = () => {
+    URL.revokeObjectURL(objectUrl);
+  };
+
+  img.src = objectUrl;
+}
+
+/* ============================================================
+   EDITOR EVENTS
+   ============================================================ */
+
+openEditor.addEventListener(
+  "click",
+  () => {
+
+    editorPanel.classList.add(
+      "editor-open"
+    );
+
+    setTimeout(
+      fitPoster,
+      20
+    );
+
+  }
+);
+
+
+closeEditor.addEventListener(
+  "click",
+  () => {
+
+    editorPanel.classList.remove(
+      "editor-open"
+    );
+
+    setTimeout(
+      fitPoster,
+      20
+    );
+
+  }
+);
+
+
+companyInput.addEventListener(
+  "input",
+  updateText
+);
+
+codeInput.addEventListener(
+  "input",
+  updateText
+);
+
+qtyInput.addEventListener(
+  "input",
+  updateText
+);
+
+greenInput.addEventListener(
+  "input",
+  updateGreen
+);
+
+
+logoInput.addEventListener(
+  "change",
+  () => {
+
+    const file =
+      logoInput.files[0];
+
+    loadFileToImage(
+      file,
+      logoImg
+    );
+
+  }
+);
+
+
+productInput.addEventListener(
+  "change",
+  () => {
+
+    const file =
+      productInput.files[0];
+
+    loadFileToImage(
+      file,
+      productImg
+    );
+
+  }
+);
+
+
+/* ============================================================
+   INITIALIZE
+   ============================================================ */
+
+logoImg.src =
+  DEFAULT_LOGO;
+
+productImg.src =
+  DEFAULT_PRODUCT;
+
+updateText();
+updateGreen();
+
+
+/* ============================================================
+   PREVIEW SCALING
+
+   The actual poster ALWAYS remains 794 × 1123.
+   Only CSS transform is used for screen preview.
+   ============================================================ */
+
+function fitPoster(){
+
+  const area =
+    document.querySelector(
+      ".preview-area"
+    );
+
+  if(!area){
+    return;
+  }
+
+  const available =
+    Math.max(
+      280,
+      area.clientWidth - 30
+    );
+
+  const scale =
+    Math.min(
+      1,
+      available / POSTER.width
+    );
+
+  poster.style.transform =
+    `scale(${scale})`;
+
+  poster.style.transformOrigin =
+    "top left";
+
+  const wrap =
+    document.querySelector(
+      ".preview-wrap"
+    );
+
+  wrap.style.height =
+    `${POSTER.height * scale}px`;
+
+}
+
+window.addEventListener(
+  "resize",
+  fitPoster
+);
+
+fitPoster();
+
+
+/* ============================================================
+   CANVAS ROUNDED RECTANGLE
+   ============================================================ */
+
+function roundRect(
+  ctx,
+  x,
+  y,
+  w,
+  h,
+  r
+){
+
+  r =
+    Math.min(
+      r,
+      w / 2,
+      h / 2
+    );
+
+  ctx.beginPath();
+
+  ctx.moveTo(
+    x + r,
+    y
+  );
+
+  ctx.arcTo(
+    x + w,
+    y,
+    x + w,
+    y + h,
+    r
+  );
+
+  ctx.arcTo(
+    x + w,
+    y + h,
+    x,
+    y + h,
+    r
+  );
+
+  ctx.arcTo(
+    x,
+    y + h,
+    x,
+    y,
+    r
+  );
+
+  ctx.arcTo(
+    x,
+    y,
+    x + w,
+    y,
+    r
+  );
+
+  ctx.closePath();
+}
+
+
+/* ============================================================
+   EXPORT POSTER
+   ============================================================
+
+   IMPORTANT:
+
+   Canvas is exactly:
+      794 × 1123
+
+   No 1080 × 1080 coordinates anywhere.
+
+   Product image:
+      104 × 154
+      586 × 745
+
+   This is the exact same area as preview.
+   ============================================================ */
+
+async function renderPoster(){
+
+  // Wait until the currently selected images are fully decoded.
+  await Promise.all([
+    waitForImage(logoImg),
+    waitForImage(productImg)
+  ]);
+
+  if(productImg && productImg.decode){
+    try{ await productImg.decode(); }catch(e){}
+  }
+  if(logoImg && logoImg.decode){
+    try{ await logoImg.decode(); }catch(e){}
+  }
+
+  const canvas =
+    document.createElement(
+      "canvas"
+    );
+
+  canvas.width =
+    POSTER.width;
+
+  canvas.height =
+    POSTER.height;
+
+  const ctx =
+    canvas.getContext(
+      "2d"
+    );
+
+  ctx.imageSmoothingEnabled =
+    true;
+
+  ctx.imageSmoothingQuality =
+    "high";
+
+
+  /* ==========================================================
+     BACKGROUND
+     ========================================================== */
+
+  const green =
+    getComputedStyle(
+      document.documentElement
+    )
+    .getPropertyValue(
+      "--green"
+    )
+    .trim() ||
+    "#8CCB40";
+
+  ctx.fillStyle =
+    green;
+
+  ctx.fillRect(
+    0,
+    0,
+    POSTER.width,
+    POSTER.height
+  );
+
+
+  /* ==========================================================
+     WHITE INNER CARD
+     ========================================================== */
+
+  roundRect(
+    ctx,
+    INNER.x,
+    INNER.y,
+    INNER.width,
+    INNER.height,
+    INNER.radius
+  );
+
+  ctx.fillStyle =
+    "#fff";
+
+  ctx.fill();
+
+
+  /* ==========================================================
+     LOGO
+
+     Same position as preview:
+     poster-inner 46,43
+     logo 28,12
+
+     Therefore:
+     74,55
+     ========================================================== */
+
+  await drawImageContain(
+    ctx,
+    logoImg,
+    INNER.x + 28,
+    INNER.y + 12,
+    100,
+    80
+  );
+
+
+  /* ==========================================================
+     COMPANY NAME
+     ========================================================== */
+
+  const company =
+    companyInput.value ||
+    "TABUK TRADING";
+
+  ctx.fillStyle =
+    "#111";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.textBaseline =
+    "middle";
+
+  let companySize =
+    35;
+
+  ctx.font =
+    `900 ${companySize}px Impact, "Arial Narrow", Arial, sans-serif`;
+
+  while(
+    ctx.measureText(company).width > 455 &&
+    companySize > 20
+  ){
+
+    companySize--;
+
+    ctx.font =
+      `900 ${companySize}px Impact, "Arial Narrow", Arial, sans-serif`;
+
+  }
+
+  ctx.fillText(
+    company,
+    INNER.x + 150 + 455 / 2,
+    INNER.y + 14 + 76 / 2
+  );
+
+
+  /* ==========================================================
+     THREE DOTS
+     ========================================================== */
+
+  ctx.fillStyle =
+    "#111";
+
+  ctx.font =
+    "900 36px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.textBaseline =
+    "middle";
+
+  ctx.save();
+
+  ctx.translate(
+    INNER.x + INNER.width - 35 - 18,
+    INNER.y + 55 + 18
+  );
+
+  ctx.scale(
+    0.72,
+    1
+  );
+
+  ctx.fillText(
+    "⋮",
+    0,
+    0
+  );
+
+  ctx.restore();
+
+
+  /* ==========================================================
+     PRODUCT IMAGE
+
+     THIS IS THE IMPORTANT FIX.
+
+     Preview rectangle:
+       poster-inner x 58
+       poster-inner y 111
+
+     Canvas rectangle:
+       46 + 58 = 104
+       43 + 111 = 154
+
+     Exact same 586 × 745 box.
+     ========================================================== */
+
+  await drawImageContain(
+    ctx,
+    productImg,
+    PRODUCT_CANVAS_BOX.x,
+    PRODUCT_CANVAS_BOX.y,
+    PRODUCT_CANVAS_BOX.width,
+    PRODUCT_CANVAS_BOX.height
+  );
+
+
+  /* ==========================================================
+     GREEN BADGE
+
+     Same position as preview.
+     ========================================================== */
+
+  roundRect(
+    ctx,
+    INNER.x + 128,
+    INNER.y + 885,
+    446,
+    125,
+    70
+  );
+
+  ctx.fillStyle =
+    green;
+
+  ctx.fill();
+
+
+  /* ==========================================================
+     BADGE TEXT
+     ========================================================== */
+
+  ctx.fillStyle =
+    "#000";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.textBaseline =
+    "middle";
+
+  ctx.font =
+    "800 36px Arial, Helvetica, sans-serif";
+
+  ctx.fillText(
+    codeInput.value || "HO-780-6G",
+    INNER.x + 128 + 223,
+    INNER.y + 885 + 43
+  );
+
+  ctx.fillText(
+    qtyInput.value || "12PCS/CTN",
+    INNER.x + 128 + 223,
+    INNER.y + 885 + 86
+  );
+
+
+  return canvas;
+
+}
+
+
+/* ============================================================
+   DOWNLOAD PNG
+   ============================================================ */
+
+document
+  .getElementById("downloadPng")
+  .addEventListener("click", async () => {
+
+    const btn = document.getElementById("downloadPng");
+    const original = btn.textContent;
+
+    btn.disabled = true;
+    btn.textContent = "Preparing PNG...";
+
+    try{
+      const canvas = await renderPoster();
+
+      const blob = await canvasToBlob(
+        canvas,
+        "image/png"
+      );
+
+      downloadBlob(
+        blob,
+        safeFileName(
+          (companyInput.value || "TABUK-TRADING") +
+          "-" +
+          (codeInput.value || "PRODUCT")
+        ) + ".png"
+      );
+
+    }catch(error){
+      console.error(error);
+      alert(
+        "PNG download failed. Please make sure the product image is loaded and try again."
+      );
+    }finally{
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  });
+
+
+/* ============================================================
+   DOWNLOAD PDF
+   ============================================================ */
+
+document
+  .getElementById("downloadPdf")
+  .addEventListener("click", async () => {
+
+    const btn = document.getElementById("downloadPdf");
+    const original = btn.textContent;
+
+    btn.disabled = true;
+    btn.textContent = "Preparing PDF...";
+
+    try{
+      const canvas = await renderPoster();
+
+      // JPEG is embedded directly into the PDF. The complete poster is
+      // rendered first, so there is no separate HTML/image positioning
+      // inside the PDF.
+      const jpegData = canvas.toDataURL(
+        "image/jpeg",
+        0.98
+      );
+
+      const pdfBytes = makeImagePdf(
+        jpegData,
+        595.28,
+        841.89
+      );
+
+      const blob = new Blob(
+        [pdfBytes],
+        {type:"application/pdf"}
+      );
+
+      downloadBlob(
+        blob,
+        safeFileName(
+          (companyInput.value || "TABUK-TRADING") +
+          "-" +
+          (codeInput.value || "PRODUCT")
+        ) + ".pdf"
+      );
+
+    }catch(error){
+      console.error(error);
+      alert(
+        "PDF download failed. Please try again after the product image has loaded."
+      );
+    }finally{
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  });
+
+
+/* ============================================================
+   SAFE FILE NAME
+   ============================================================ */
+
+function safeFileName(s){
+
+  return s
+    .replace(
+      /[\\/:*?"<>|]+/g,
+      "-"
+    )
+    .replace(
+      /\s+/g,
+      "-"
+    );
+
+}
+
+
+/* ============================================================
+   MINIMAL IMAGE PDF
+
+   Creates a one-page A4 PDF with the rendered poster.
+
+   The image itself is the complete 794 × 1123 poster,
+   so the PDF cannot introduce separate image positioning.
+   ============================================================ */
+
+function makeImagePdf(
+  dataUrl,
+  pageWidth,
+  pageHeight
+){
+
+  const base64 =
+    dataUrl.split(",")[1];
+
+  const binary =
+    atob(base64);
+
+  const imgBytes =
+    new Uint8Array(
+      binary.length
+    );
+
+  for(
+    let i=0;
+    i<binary.length;
+    i++
+  ){
+
+    imgBytes[i] =
+      binary.charCodeAt(i);
+
+  }
+
+  const encoder =
+    new TextEncoder();
+
+  const objects = [];
+
+  function addObj(
+    bodyBytes
+  ){
+
+    objects.push(
+      bodyBytes
+    );
+
+    return objects.length;
+
+  }
+
+  function bytes(s){
+
+    return encoder.encode(s);
+
+  }
+
+
+  /* ==========================================================
+     PDF OBJECTS
+     ========================================================== */
+
+  const obj1 =
+    addObj(
+      bytes(
+        "<< /Type /Catalog /Pages 2 0 R >>"
+      )
+    );
+
+
+  const obj2 =
+    addObj(
+      bytes(
+        "<< /Type /Pages /Kids [3 0 R] /Count 1 >>"
+      )
+    );
+
+
+  /*
+    Page.
+  */
+
+  const obj3 =
+    addObj(
+      bytes(
+        "<< /Type /Page " +
+        "/Parent 2 0 R " +
+        "/MediaBox [0 0 " +
+        pageWidth +
+        " " +
+        pageHeight +
+        "] " +
+        "/Resources << /XObject << /Im0 5 0 R >> >> " +
+        "/Contents 4 0 R >>"
+      )
+    );
+
+
+  /*
+    Draw image full page.
+  */
+
+  const content =
+    "q\n" +
+    pageWidth +
+    " 0 0 " +
+    pageHeight +
+    " 0 0 cm\n" +
+    "/Im0 Do\n" +
+    "Q\n";
+
+
+  const obj4 =
+    addObj(
+      bytes(
+        "<< /Length " +
+        new TextEncoder().encode(content).length +
+        " >>\n" +
+        "stream\n" +
+        content +
+        "endstream"
+      )
+    );
+
+
+  /*
+    JPEG image object.
+
+    JPEG dimensions are the canvas dimensions:
+      794 × 1123
+  */
+
+  const imgHeader =
+    bytes(
+      "<< /Type /XObject " +
+      "/Subtype /Image " +
+      "/Width 794 " +
+      "/Height 1123 " +
+      "/ColorSpace /DeviceRGB " +
+      "/BitsPerComponent 8 " +
+      "/Filter /DCTDecode " +
+      "/Length " +
+      imgBytes.length +
+      " >>\n" +
+      "stream\n"
+    );
+
+  const imgFooter =
+    bytes(
+      "\nendstream"
+    );
+
+  const imageObj =
+    new Uint8Array(
+      imgHeader.length +
+      imgBytes.length +
+      imgFooter.length
+    );
+
+  imageObj.set(
+    imgHeader,
+    0
+  );
+
+  imageObj.set(
+    imgBytes,
+    imgHeader.length
+  );
+
+  imageObj.set(
+    imgFooter,
+    imgHeader.length +
+    imgBytes.length
+  );
+
+  const obj5 =
+    addObj(
+      imageObj
+    );
+
+
+  /* ==========================================================
+     BUILD PDF
+     ========================================================== */
+
+  const pdfParts = [];
+
+  const header =
+    new Uint8Array([
+      0x25,0x50,0x44,0x46,0x2D,0x31,0x2E,0x34,0x0A,
+      0x25,0xE2,0xE3,0xCF,0xD3,0x0A
+    ]);
+
+  pdfParts.push(
+    header
+  );
+
+  const offsets = [0];
+
+  let total =
+    header.length;
+
+
+  for(
+    let i=0;
+    i<objects.length;
+    i++
+  ){
+
+    offsets.push(
+      total
+    );
+
+    const start =
+      bytes(
+        (i + 1) +
+        " 0 obj\n"
+      );
+
+    const end =
+      bytes(
+        "\nendobj\n"
+      );
+
+    pdfParts.push(
+      start,
+      objects[i],
+      end
+    );
+
+    total +=
+      start.length +
+      objects[i].length +
+      end.length;
+
+  }
+
+
+  const xrefOffset =
+    total;
+
+  let xref =
+    "xref\n" +
+    "0 " +
+    (objects.length + 1) +
+    "\n";
+
+  xref +=
+    "0000000000 65535 f \n";
+
+
+  for(
+    let i=1;
+    i<offsets.length;
+    i++
+  ){
+
+    xref +=
+      String(
+        offsets[i]
+      )
+      .padStart(
+        10,
+        "0"
+      ) +
+      " 00000 n \n";
+
+  }
+
+
+  const trailer =
+    "trailer\n" +
+    "<< /Size " +
+    (objects.length + 1) +
+    " /Root 1 0 R >>\n" +
+    "startxref\n" +
+    xrefOffset +
+    "\n" +
+    "%%EOF";
+
+
+  pdfParts.push(
+    bytes(xref),
+    bytes(trailer)
+  );
+
+
+  let length = 0;
+
+  for(
+    const part of pdfParts
+  ){
+
+    length +=
+      part.length;
+
+  }
+
+
+  const output =
+    new Uint8Array(
+      length
+    );
+
+  let position = 0;
+
+
+  for(
+    const part of pdfParts
+  ){
+
+    output.set(
+      part,
+      position
+    );
+
+    position +=
+      part.length;
+
+  }
+
+
+  return output;
+
+}
+
+
+/* ============================================================
+   PRINT
+   ============================================================ */
+
+// document
+//   .getElementById("printBtn")
+//   .addEventListener(
+//     "click",
+//     () => {
+
+//       /*
+//         Reset preview scaling before printing.
+//       */
+
+//       poster.style.transform =
+//         "none";
+
+//       window.print();
+
+//       /*
+//         Restore preview after print.
+//       */
+
+//       setTimeout(
+//         fitPoster,
+//         500
+//       );
+
+//     }
+//   );
+
+
+/* ============================================================
+   RESET
+   ============================================================ */
+
+document
+  .getElementById("resetBtn")
+  .addEventListener(
+    "click",
+    () => {
+
+      companyInput.value =
+        "TABUK TRADING";
+
+      codeInput.value =
+        "HO-780-6G";
+
+      qtyInput.value =
+        "12PCS/CTN";
+
+      greenInput.value =
+        "#8CCB40";
+
+      logoInput.value =
+        "";
+
+      productInput.value =
+        "";
+
+      logoImg.removeAttribute("src");
+      productImg.removeAttribute("src");
+
+      updateText();
+
+      updateGreen();
+
+      fitPoster();
+
+    }
+  );
+
+
+/* ============================================================
+   PREVENT IMAGE DRAGGING
+   ============================================================ */
+
+logoImg.draggable =
+  false;
+
+productImg.draggable =
+  false;
+
+
+/* ============================================================
+   FINAL INITIALIZATION
+   ============================================================ */
+
+window.addEventListener(
+  "load",
+  () => {
+
+    updateText();
+
+    updateGreen();
+
+    fitPoster();
+
+  }
+);
+
+</script>
+
+</body>
+</html>
