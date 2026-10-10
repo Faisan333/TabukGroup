@@ -9017,6 +9017,65 @@ document.addEventListener("keydown", function(e){
 
 })();
 </script>
+
+<script>
+/* Receipt preview fix: keep the visible fr* form fields synced with the receipt preview. */
+(function () {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const ids = ["frNo","frDate","frCustomer","frrecdate","frAddress","frMethod","frRef","frPurpose","frAmount"];
+  if (!$("frPurpose") || !$("frAmount") || !$("frPaper")) return;
+
+  const words = ["Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+  const tens = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+  function numWords(n) {
+    n = Math.floor(Number(n) || 0);
+    if (n < 20) return words[n];
+    if (n < 100) return tens[Math.floor(n/10)] + (n%10 ? " " + words[n%10] : "");
+    if (n < 1000) return words[Math.floor(n/100)] + " Hundred" + (n%100 ? " " + numWords(n%100) : "");
+    if (n < 1000000) return numWords(Math.floor(n/1000)) + " Thousand" + (n%1000 ? " " + numWords(n%1000) : "");
+    if (n < 1000000000) return numWords(Math.floor(n/1000000)) + " Million" + (n%1000000 ? " " + numWords(n%1000000) : "");
+    return String(n);
+  }
+  function dateFmt(v) {
+    if (!v) return "—";
+    const p = v.split("-");
+    return p.length === 3 ? p[2] + "/" + p[1] + "/" + p[0] : v;
+  }
+  function put(id, value) { const e=$(id); if(e) e.textContent = value || "—"; }
+  function updateReceiptPreview() {
+    const amount = Math.max(0, Number(($("frAmount")||{}).value) || 0);
+    const cents = Math.round(amount * 100);
+    const whole = Math.floor(cents/100), fils = cents%100;
+    const amountWords = numWords(whole) + " Dirhams" + (fils ? " and " + numWords(fils) + " Fils" : "") + " Only";
+    put("frPN", $("frNo")?.value || $("frNumber")?.value);
+    put("frPD", dateFmt($("frDate")?.value || $("frReceiptDate")?.value));
+    put("frPC", $("frCustomer")?.value);
+    put("frPA", $("frAddress")?.value);
+    put("frPM", $("frMethod")?.value || "Cash");
+    put("frPP", dateFmt($("frrecdate")?.value));
+    put("frPU", $("frPurpose")?.value);
+    put("frPB", $("frPreparedBy")?.value || "TABUK GROUP OF COMPANIES");
+    put("frPR", $("frRef")?.value);
+    put("frPAmt", amount.toLocaleString("en-AE",{minimumFractionDigits:2,maximumFractionDigits:2}) + " AED");
+    put("frPW", amountWords);
+    put("frTotal", amount.toLocaleString("en-AE",{minimumFractionDigits:2,maximumFractionDigits:2}) + " AED");
+    put("frWords", "Amount in words: " + amountWords);
+  }
+  ids.forEach(id => {
+    const el=$(id);
+    if(el) { el.addEventListener("input",updateReceiptPreview); el.addEventListener("change",updateReceiptPreview); }
+  });
+  document.addEventListener("DOMContentLoaded", updateReceiptPreview);
+  updateReceiptPreview();
+  const oldInit = window.initializeReceipt;
+  window.initializeReceipt = function() {
+    if (typeof oldInit === "function") oldInit();
+    updateReceiptPreview();
+  };
+})();
+</script>
+
 </body>
 <!-- FINAL CHECK: duplicate calculator/document IDs removed; calculator controller delegated and live; A4/80mm receipt + voucher retained. -->
 </html>
