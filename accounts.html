@@ -4719,129 +4719,229 @@ button{
 
 
 <section class="module-page" id="page-receipt">
-<div class="final-doc-wrap">
-<div class="final-doc-toolbar">
-<div><h2>Cash Receipt</h2><p>Professional customer payment receipt</p></div>
-<div class="final-doc-actions">
-<button class="final-doc-btn" id="frNew">New Receipt</button>
-<button class="final-doc-btn" id="frA4">A4</button><button class="final-doc-btn" id="frThermal">80mm</button>
-<button class="final-doc-btn primary" id="frPrint">Print Receipt</button>
-</div>
-</div>
+  <div class="final-doc-wrap">
 
-<div class="final-doc-grid">
-<div class="final-doc-card">
-<div class="final-doc-head"><strong>Receipt Entry</strong><span id="frStatus">Ready</span></div>
-<div class="final-doc-form">
+    <div class="final-doc-toolbar">
+      <div>
+        <h2>Receipt Voucher</h2>
+        <p>Professional customer payment receipt</p>
+      </div>
+      <div class="final-doc-actions">
+        <button type="button" class="final-doc-btn" id="frNew">New Receipt</button>
+        <button type="button" class="final-doc-btn" id="frA4">A4</button>
+        <button type="button" class="final-doc-btn" id="frThermal">80mm</button>
+        <button type="button" class="final-doc-btn primary" id="frPrint">Print Receipt</button>
+      </div>
+    </div>
 
-<div class="final-doc-section">Receipt Information</div>
-<div class="final-doc-fields">
-<div class="final-doc-field"><label>RECEIPT NO.</label><input id="frNo"></div>
-<div class="final-doc-field"><label>DATE</label><input id="frDate" type="date"></div>
-<div class="final-doc-field"><label>TIME</label><input id="frTime" type="time"></div>
-<div class="final-doc-field"><label>RECEIVED BY</label><input id="frBy" value="TABUK GROUP OF COMPANIES"></div>
-</div>
+    <div class="final-doc-grid">
 
-<div class="final-doc-section" style="margin-top:16px">Customer</div>
-<div class="final-doc-fields">
-<div class="final-doc-field"><label>RECEIVED FROM</label><input id="frCustomer" placeholder="Customer name"></div>
-<div class="final-doc-field"><label>MOBILE</label><input id="frPhone" placeholder="+971"></div>
-<div class="final-doc-field full"><label>ADDRESS / DETAILS</label><input id="frAddress"></div>
-</div>
+      <!-- RECEIPT ENTRY -->
+      <div class="final-doc-card">
+        <div class="final-doc-head">
+          <strong>Receipt Entry</strong>
+          <span id="frStatus">Ready</span>
+        </div>
 
-<div class="final-doc-section" style="margin-top:16px">Payment</div>
-<div class="final-doc-fields">
-<div class="final-doc-field"><label>PAYMENT METHOD</label><select id="frMethod"><option>Cash</option><option>Bank Transfer</option><option>Cheque</option><option>Card</option><option>Online Payment</option><option>Other</option></select></div>
-<div class="final-doc-field"><label>REFERENCE NO.</label><input id="frRef"></div>
-<div class="final-doc-field full"><label>RECEIVED FOR</label><textarea id="frPurpose" placeholder="Payment received for..."></textarea></div>
-</div>
+        <div class="final-doc-form">
 
-<div class="final-doc-amount">
-<label>AMOUNT RECEIVED (AED)</label>
-<input id="frAmount" type="number" min="0" step="0.01" value="0">
-<div class="final-doc-words" id="frWords">Amount in words: Zero Dirhams Only</div>
-</div>
-<div class="final-doc-total"><span>TOTAL RECEIVED</span><strong id="frTotal">0.00 AED</strong></div>
-</div>
-</div>
+          <div class="final-doc-section">Receipt Information</div>
 
-<div class="final-doc-card">
-<div class="final-doc-head"><strong>Receipt Preview</strong><span id="frMode">A4</span></div>
-<div class="final-doc-preview">
-<div class="final-paper receipt final-print-target" id="frPaper">
-<div class="final-company">
-<img class="final-logo" src="images/CURRENT.png" onerror="this.style.display='none'">
-<div class="final-company-name">TABUK TRADING <br> YELLOW LEMON GENERAL TRADING </div>
-<div class="final-company-details">Al Ras, Souq Al Kabeer, Deira, Dubai - U.A.E.<br>Tel: 04 225 9535 &nbsp; | &nbsp; Fax: 04 259 9435<br>WhatsApp: 055 9297977 &nbsp; | &nbsp; Mobile: 055 9702007 (WH)<br>P.O. Box: 19185 &nbsp; | &nbsp; E-mail: tabuk51@yahoo.com</div>
-<div class="final-title">CASH RECEIPT</div>
-</div>
-<div class="final-meta">
-<div><small>Receipt No.</small><strong id="frPN">—</strong></div>
-<div><small>Date</small><strong id="frPD">—</strong></div>
-<div><small>Received From</small><strong id="frPC">—</strong></div>
-<div><small>Mobile</small><strong id="frPP">—</strong></div>
-</div>
-<div class="final-box">
-<div class="final-row"><span>Address / Details</span><strong id="frPA">—</strong></div>
-<div class="final-row"><span>Payment Method</span><strong id="frPM">Cash</strong></div>
-<div class="final-row"><span>Reference No.</span><strong id="frPR">—</strong></div>
-<div class="final-row"><span>Received For</span><strong id="frPU">—</strong></div>
-<div class="final-row"><span>Received By</span><strong id="frPB">—</strong></div>
-</div>
-<div class="final-big-amount"><span>AMOUNT RECEIVED</span><strong id="frPAmt">0.00 AED</strong></div>
-<div class="final-doc-words"><strong>Amount in Words:</strong> <span id="frPW">Zero Dirhams Only</span></div>
-<div class="final-sign"><div>Received By</div><div>Customer Signature</div></div>
-<div class="final-footer">Thank you for your payment.<br>Please retain this receipt for your records.</div>
-</div>
-</div>
-</div>
-</div>
+          <div class="final-doc-fields">
+            <div class="final-doc-field">
+              <label>RECEIPT NO.</label>
+              <input id="frNo" type="text">
+            </div>
 
-<script>
-(function(){
-const K="FINAL_RECEIPT_V1",C="FINAL_RECEIPT_COUNTER_V1",q=id=>document.getElementById(id);
-const f={no:q("frNo"),date:q("frDate"),time:q("frTime"),by:q("frBy"),customer:q("frCustomer"),phone:q("frPhone"),address:q("frAddress"),method:q("frMethod"),ref:q("frRef"),purpose:q("frPurpose"),amount:q("frAmount")};
-const one=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"],ten=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
-function today(){let d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function tm(){let d=new Date();return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
-function next(){let n=Number(localStorage.getItem(C)||1000)+1;localStorage.setItem(C,n);return "CR-"+String(n).padStart(5,"0")}
-function words(n){n=Math.floor(Number(n)||0);if(n<20)return one[n];if(n<100)return ten[Math.floor(n/10)]+(n%10?" "+one[n%10]:"");if(n<1000)return one[Math.floor(n/100)]+" Hundred"+(n%100?" "+words(n%100):"");if(n<1e6)return words(Math.floor(n/1000))+" Thousand"+(n%1000?" "+words(n%1000):"");return words(Math.floor(n/1e6))+" Million"+(n%1e6?" "+words(n%1e6):"")}
-function aw(v){let a=Math.max(0,Number(v)||0),d=Math.floor(a),c=Math.round((a-d)*100),s=(d?words(d):"Zero")+" Dirhams";if(c)s+=" and "+words(c)+" Fils";return s+" Only"}
-function fmt(v){return (Number(v)||0).toFixed(2)+" AED"}
-function dt(v){if(!v)return "—";let p=v.split("-");return p[2]+"/"+p[1]+"/"+p[0]}
-function update(){let a=Number(f.amount.value)||0; q("frTotal").textContent=fmt(a);q("frWords").textContent="Amount in words: "+aw(a);q("frPN").textContent=f.no.value||"—";q("frPD").textContent=dt(f.date.value);q("frPC").textContent=f.customer.value||"—";q("frPP").textContent=f.phone.value||"—";q("frPA").textContent=f.address.value||"—";q("frPM").textContent=f.method.value||"Cash";q("frPR").textContent=f.ref.value||"—";q("frPU").textContent=f.purpose.value||"—";q("frPB").textContent=f.by.value||"—";q("frPAmt").textContent=fmt(a);q("frPW").textContent=aw(a)}
-function save(){let d={};Object.keys(f).forEach(k=>d[k]=f[k].value);localStorage.setItem(K,JSON.stringify(d));q("frStatus").textContent="Saved"}
-function fresh(){f.no.value=next();f.date.value=today();f.time.value=tm();f.by.value="TABUK GROUP OF COMPANIES";f.customer.value="";f.phone.value="";f.address.value="";f.method.value="Cash";f.ref.value="";f.purpose.value="";f.amount.value="0";update();save()}
-function load(){let d;try{d=JSON.parse(localStorage.getItem(K))}catch(e){}if(!d){fresh();return}Object.keys(f).forEach(k=>{if(d[k]!=null)f[k].value=d[k]});if(!f.no.value)f.no.value=next();if(!f.date.value)f.date.value=today();if(!f.time.value)f.time.value=tm();update()}
-Object.values(f).forEach(x=>x.addEventListener("input",()=>{update();save()}));
-Object.values(f).forEach(x=>x.addEventListener("change",()=>{update();save()}));
-q("frNew").onclick=()=>{if(confirm("Create a new receipt?"))fresh()};
-q("frPrint").onclick=()=>{update();window.print()};
-q("frA4").onclick=()=>{
-  q("frPaper").classList.remove("thermal");
-  q("frMode").textContent="A4";
-};
-q("frThermal").onclick=()=>{
-  q("frPaper").classList.add("thermal");
-  q("frMode").textContent="80mm";
-};
-load();
-})();
-</script>
+            <div class="final-doc-field">
+              <label>DATE</label>
+              <input id="frDate" type="date">
+            </div>
 
-<script>
-(function(){
-  const $=id=>document.getElementById(id);
-  const p=$("frPaper"), a=$("frA4"), t=$("frThermal"), pr=$("frPrint"), m=$("frMode");
-  if(!p||!a||!t||!pr)return;
-  const mode=x=>{p.classList.toggle("thermal",x==="80mm");if(m)m.textContent=x};
-  a.onclick=e=>{e.preventDefault();mode("A4")};
-  t.onclick=e=>{e.preventDefault();mode("80mm")};
-  pr.onclick=e=>{e.preventDefault();window.print()};
-  mode("A4");
-})();
-</script>
+            <div class="final-doc-field">
+              <label>TIME</label>
+              <input id="frTime" type="time">
+            </div>
+
+            <div class="final-doc-field">
+              <label>RECEIVED BY</label>
+              <input id="frBy" value="TABUK GROUP OF COMPANIES">
+            </div>
+          </div>
+
+          <div class="final-doc-section" style="margin-top:16px">Customer</div>
+
+          <div class="final-doc-fields">
+            <div class="final-doc-field">
+              <label>RECEIVED FROM</label>
+              <input id="frCustomer" placeholder="Customer name">
+            </div>
+
+            <div class="final-doc-field">
+              <label>RECEIVED DATE</label>
+              <input id="frrecdate" type="date">
+            </div>
+
+            <div class="final-doc-field full">
+              <label>ADDRESS / DETAILS</label>
+              <input id="frAddress">
+            </div>
+          </div>
+
+          <div class="final-doc-section" style="margin-top:16px">Payment</div>
+
+          <div class="final-doc-fields">
+            <div class="final-doc-field">
+              <label>PAYMENT METHOD</label>
+              <select id="frMethod">
+                <option>Cash</option>
+                <option>Bank Transfer</option>
+                <option>Cheque</option>
+                <option>Card</option>
+                <option>Online Payment</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="final-doc-field">
+              <label>REFERENCE NO.</label>
+              <input id="frRef">
+            </div>
+
+            <div class="final-doc-field full">
+              <label>RECEIVED FOR</label>
+              <textarea id="frPurpose" placeholder="Payment received for..."></textarea>
+            </div>
+          </div>
+
+          <div class="final-doc-amount">
+            <label>AMOUNT RECEIVED (AED)</label>
+            <input id="frAmount" type="number" min="0" step="0.01" value="0">
+            <div class="final-doc-words" id="frWords">
+              Amount in words: Zero Dirhams Only
+            </div>
+          </div>
+
+          <div class="final-doc-total">
+            <span>TOTAL RECEIVED</span>
+            <strong id="frTotal">0.00 AED</strong>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RECEIPT PREVIEW -->
+      <div class="final-doc-card">
+        <div class="final-doc-head">
+          <strong>Receipt Preview</strong>
+          <span id="frMode">A4</span>
+        </div>
+
+        <div class="final-doc-preview">
+          <div class="final-paper receipt final-print-target" id="frPaper">
+
+            <div class="final-company">
+              <img
+                class="final-logo"
+                src="images/CURRENT.png"
+                onerror="this.style.display='none'"
+                alt="Company Logo"
+              >
+
+              <div class="final-company-name">
+                TABUK TRADING<br>
+                YELLOW LEMON GENERAL TRADING LLC
+              </div>
+
+              <div class="final-company-details">
+                Al Ras, Souq Al Kabeer, Deira, Dubai - U.A.E.<br>
+                Tel: 04 225 9535 &nbsp; | &nbsp; Fax: 04 259 9435<br>
+                WhatsApp: 055 9297977 &nbsp; | &nbsp;
+                Mobile: 055 9702007 (WH)<br>
+                P.O. Box: 19185 &nbsp; | &nbsp;
+                E-mail: tabuk51@yahoo.com
+              </div>
+
+              <div class="final-title">RECEIPT VOUCHER</div>
+            </div>
+
+            <div class="final-meta">
+              <div>
+                <small>Receipt No.</small>
+                <strong id="frPN">—</strong>
+              </div>
+
+              <div>
+                <small>Date</small>
+                <strong id="frPD">—</strong>
+              </div>
+
+              <div>
+                <small>Received From</small>
+                <strong id="frPC">—</strong>
+              </div>
+
+              <div>
+                <small>Received Date</small>
+                <strong id="frPP">—</strong>
+              </div>
+            </div>
+
+            <div class="final-box">
+              <div class="final-row">
+                <span>Address / Details</span>
+                <strong id="frPA">—</strong>
+              </div>
+
+              <div class="final-row">
+                <span>Payment Method</span>
+                <strong id="frPM">Cash</strong>
+              </div>
+
+              <div class="final-row">
+                <span>Reference No.</span>
+                <strong id="frPR">—</strong>
+              </div>
+
+              <div class="final-row">
+                <span>Received For</span>
+                <strong id="frPU">—</strong>
+              </div>
+
+              <div class="final-row">
+                <span>Received By</span>
+                <strong id="frPB">—</strong>
+              </div>
+            </div>
+
+            <div class="final-big-amount">
+              <span>AMOUNT RECEIVED</span>
+              <strong id="frPAmt">0.00 AED</strong>
+            </div>
+
+            <div class="final-doc-words">
+              <strong>Amount in Words:</strong>
+              <span id="frPW">Zero Dirhams Only</span>
+            </div>
+
+            <div class="final-sign">
+              <div>Received By</div>
+              <div>Customer Signature</div>
+            </div>
+
+            <div class="final-footer">
+              Thank you for your payment.<br>
+              Please retain this receipt for your records.
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </section>
+
 <section
     class="module-page"
     id="page-tools"
@@ -5351,7 +5451,7 @@ load();
 <div class="final-paper voucher final-print-target" id="pvPaper">
 <div class="final-company">
 <img class="final-logo" src="images/CURRENT.png" onerror="this.style.display='none'">
-<div class="final-company-name">TABUK TRADING <br> YELLOW LEMON GENERAL TRADING </div>
+<div class="final-company-name">TABUK TRADING <br> YELLOW LEMON GENERAL TRADING LLC</div>
 <div class="final-company-details">Al Ras, Souq Al Kabeer, Deira, Dubai - U.A.E.<br>Tel: 04 225 9535 &nbsp; | &nbsp; Fax: 04 259 9435<br>WhatsApp: 055 9297977 &nbsp; | &nbsp; Mobile: 055 9702007 (WH)<br>P.O. Box: 19185 &nbsp; | &nbsp; E-mail: tabuk51@yahoo.com</div>
 <div class="final-title">PAYMENT VOUCHER</div>
 </div>
@@ -5376,33 +5476,258 @@ load();
 </div>
 
 <script>
-(function(){
-const K="FINAL_PAYMENT_VOUCHER_V1",C="FINAL_PAYMENT_VOUCHER_COUNTER_V1",q=id=>document.getElementById(id);
-const f={no:q("pvNo"),date:q("pvDate"),from:q("pvFrom"),to:q("pvTo"),method:q("pvMethod"),ref:q("pvRef"),purpose:q("pvPurpose"),amount:q("pvAmount")};
-const one=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"],ten=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
-function today(){let d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
-function next(){let n=Number(localStorage.getItem(C)||2000)+1;localStorage.setItem(C,n);return "PV-"+String(n).padStart(5,"0")}
-function words(n){n=Math.floor(Number(n)||0);if(n<20)return one[n];if(n<100)return ten[Math.floor(n/10)]+(n%10?" "+one[n%10]:"");if(n<1000)return one[Math.floor(n/100)]+" Hundred"+(n%100?" "+words(n%100):"");if(n<1e6)return words(Math.floor(n/1000))+" Thousand"+(n%1000?" "+words(n%1000):"");return words(Math.floor(n/1e6))+" Million"+(n%1e6?" "+words(n%1e6):"")}
-function aw(v){let a=Math.max(0,Number(v)||0),d=Math.floor(a),c=Math.round((a-d)*100),s=(d?words(d):"Zero")+" Dirhams";if(c)s+=" and "+words(c)+" Fils";return s+" Only"}
-function fmt(v){return (Number(v)||0).toFixed(2)+" AED"}
-function dt(v){if(!v)return "—";let p=v.split("-");return p[2]+"/"+p[1]+"/"+p[0]}
-function update(){let a=Number(f.amount.value)||0;q("pvTotal").textContent=fmt(a);q("pvWords").textContent="Amount in words: "+aw(a);q("pvPN").textContent=f.no.value||"—";q("pvPD").textContent=dt(f.date.value);q("pvPF").textContent=f.from.value||"—";q("pvPT").textContent=f.to.value||"—";q("pvPM").textContent=f.method.value||"Cash";q("pvPR").textContent=f.ref.value||"—";q("pvPU").textContent=f.purpose.value||"—";q("pvPA").textContent=fmt(a);q("pvPW").textContent=aw(a)}
-function save(){let d={};Object.keys(f).forEach(k=>d[k]=f[k].value);localStorage.setItem(K,JSON.stringify(d));q("pvStatus").textContent="Saved"}
-function fresh(){f.no.value=next();f.date.value=today();f.from.value="";f.to.value="TABUK GROUP OF COMPANIES";f.method.value="Cash";f.ref.value="";f.purpose.value="";f.amount.value="0";update();save()}
-function load(){let d;try{d=JSON.parse(localStorage.getItem(K))}catch(e){}if(!d){fresh();return}Object.keys(f).forEach(k=>{if(d[k]!=null)f[k].value=d[k]});if(!f.no.value)f.no.value=next();if(!f.date.value)f.date.value=today();update()}
-Object.values(f).forEach(x=>x.addEventListener("input",()=>{update();save()}));
-Object.values(f).forEach(x=>x.addEventListener("change",()=>{update();save()}));
-function mode(m){
-  const p=q("pvPaper");
-  p.classList.remove("voucher-thermal");
-  q("pvMode").textContent=m;
-  if(m==="80mm") p.classList.add("voucher-thermal");
-}
-q("pvNew").onclick=()=>{if(confirm("Create a new payment voucher?"))fresh()};
-q("pvPrint").onclick=()=>{update();window.print()};
-q("pvA4").onclick=()=>mode("A4");
-q("pv80").onclick=()=>mode("80mm");
-load();
+(function () {
+  "use strict";
+
+  const K = "FINAL_RECEIPT_V1";
+  const C = "FINAL_RECEIPT_COUNTER_V1";
+
+  const q = id => document.getElementById(id);
+
+  const f = {
+    no: q("frNo"),
+    date: q("frDate"),
+    time: q("frTime"),
+    by: q("frBy"),
+    customer: q("frCustomer"),
+    receivedDate: q("frrecdate"),
+    address: q("frAddress"),
+    method: q("frMethod"),
+    ref: q("frRef"),
+    purpose: q("frPurpose"),
+    amount: q("frAmount")
+  };
+
+  // Get today's date in local UAE/browser time.
+  function today() {
+    const d = new Date();
+
+    return [
+      d.getFullYear(),
+      String(d.getMonth() + 1).padStart(2, "0"),
+      String(d.getDate()).padStart(2, "0")
+    ].join("-");
+  }
+
+  function tm() {
+    const d = new Date();
+
+    return (
+      String(d.getHours()).padStart(2, "0") + ":" +
+      String(d.getMinutes()).padStart(2, "0")
+    );
+  }
+
+  function next() {
+    const n = Number(localStorage.getItem(C) || 1000) + 1;
+
+    localStorage.setItem(C, n);
+
+    return "CR-" + String(n).padStart(5, "0");
+  }
+
+  const one = [
+    "", "One", "Two", "Three", "Four", "Five", "Six",
+    "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve",
+    "Thirteen", "Fourteen", "Fifteen", "Sixteen",
+    "Seventeen", "Eighteen", "Nineteen"
+  ];
+
+  const ten = [
+    "", "", "Twenty", "Thirty", "Forty",
+    "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"
+  ];
+
+  function words(n) {
+    n = Math.floor(Number(n) || 0);
+
+    if (n < 20) return one[n];
+
+    if (n < 100) {
+      return ten[Math.floor(n / 10)] +
+        (n % 10 ? " " + one[n % 10] : "");
+    }
+
+    if (n < 1000) {
+      return one[Math.floor(n / 100)] + " Hundred" +
+        (n % 100 ? " " + words(n % 100) : "");
+    }
+
+    if (n < 1000000) {
+      return words(Math.floor(n / 1000)) + " Thousand" +
+        (n % 1000 ? " " + words(n % 1000) : "");
+    }
+
+    if (n < 1000000000) {
+      return words(Math.floor(n / 1000000)) + " Million" +
+        (n % 1000000 ? " " + words(n % 1000000) : "");
+    }
+
+    return String(n);
+  }
+
+  function aw(v) {
+    const a = Math.max(0, Number(v) || 0);
+    const totalFils = Math.round(a * 100);
+    const d = Math.floor(totalFils / 100);
+    const c = totalFils % 100;
+
+    let s = (d ? words(d) : "Zero") + " Dirhams";
+
+    if (c) {
+      s += " and " + words(c) + " Fils";
+    }
+
+    return s + " Only";
+  }
+
+  function fmt(v) {
+    return (Number(v) || 0).toFixed(2) + " AED";
+  }
+
+  function dt(v) {
+    if (!v) return "—";
+
+    const p = v.split("-");
+
+    if (p.length !== 3) return v;
+
+    return p[2] + "/" + p[1] + "/" + p[0];
+  }
+
+  function update() {
+    const a = Number(f.amount.value) || 0;
+
+    q("frTotal").textContent = fmt(a);
+    q("frWords").textContent = "Amount in words: " + aw(a);
+
+    q("frPN").textContent = f.no.value || "—";
+    q("frPD").textContent = dt(f.date.value);
+    q("frPC").textContent = f.customer.value || "—";
+
+    // Correctly display the received date, not a mobile number.
+    q("frPP").textContent = dt(f.receivedDate.value);
+
+    q("frPA").textContent = f.address.value || "—";
+    q("frPM").textContent = f.method.value || "Cash";
+    q("frPR").textContent = f.ref.value || "—";
+    q("frPU").textContent = f.purpose.value || "—";
+    q("frPB").textContent = f.by.value || "—";
+
+    q("frPAmt").textContent = fmt(a);
+    q("frPW").textContent = aw(a);
+  }
+
+  function save() {
+    const d = {};
+
+    Object.keys(f).forEach(k => {
+      d[k] = f[k].value;
+    });
+
+    try {
+      localStorage.setItem(K, JSON.stringify(d));
+      q("frStatus").textContent = "Saved";
+    } catch (e) {
+      q("frStatus").textContent = "Storage unavailable";
+    }
+  }
+
+  function fresh() {
+    f.no.value = next();
+    f.date.value = today();
+    f.receivedDate.value = today();
+    f.time.value = tm();
+
+    f.by.value = "TABUK GROUP OF COMPANIES";
+    f.customer.value = "";
+    f.address.value = "";
+    f.method.value = "Cash";
+    f.ref.value = "";
+    f.purpose.value = "";
+    f.amount.value = "0";
+
+    update();
+    save();
+  }
+
+  function load() {
+    let d = null;
+
+    try {
+      d = JSON.parse(localStorage.getItem(K));
+    } catch (e) {
+      d = null;
+    }
+
+    if (!d || typeof d !== "object") {
+      fresh();
+      return;
+    }
+
+    Object.keys(f).forEach(k => {
+      if (d[k] != null) {
+        f[k].value = d[k];
+      }
+    });
+
+    if (!f.no.value) f.no.value = next();
+
+    // Use today's date when a saved date is missing.
+    if (!f.date.value) f.date.value = today();
+    if (!f.receivedDate.value) {
+      f.receivedDate.value = today();
+    }
+
+    if (!f.time.value) f.time.value = tm();
+
+    update();
+    save();
+  }
+
+  // Update the preview and save whenever the user edits a field.
+  Object.values(f).forEach(el => {
+    el.addEventListener("input", function () {
+      update();
+      save();
+    });
+
+    el.addEventListener("change", function () {
+      update();
+      save();
+    });
+  });
+
+  q("frNew").addEventListener("click", function () {
+    if (confirm("Create a new receipt?")) {
+      fresh();
+    }
+  });
+
+  function setMode(mode) {
+    const paper = q("frPaper");
+
+    paper.classList.toggle("thermal", mode === "80mm");
+    q("frMode").textContent = mode;
+  }
+
+  q("frA4").addEventListener("click", function () {
+    setMode("A4");
+  });
+
+  q("frThermal").addEventListener("click", function () {
+    setMode("80mm");
+  });
+
+  q("frPrint").addEventListener("click", function () {
+    update();
+    window.print();
+  });
+
+  // Initialise the receipt only once.
+  load();
+  setMode("A4");
+
 })();
 </script>
 
