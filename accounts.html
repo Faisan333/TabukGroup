@@ -3414,6 +3414,15 @@ button{
 .final-meta div:nth-last-child(-n+2){border-bottom:0}
 .final-meta small{display:block;font-size:7.5px;color:#8996a0;font-weight:800;text-transform:uppercase;margin-bottom:3px}
 .final-meta strong{font-size:9.5px}
+
+
+.final-meta1{grid-template-columns:0fr 1fr;margin-top:14px;border:1px solid #e0e6ea;border-radius:7px;overflow:hidden}
+.final-meta1 div{padding:8px 9px;border-bottom:1px solid #e0e6ea}
+.final-meta1 div:nth-child(odd){border-right:1px solid #e0e6ea}
+.final-meta1 div:nth-last-child(-n+2){border-bottom:0}
+.final-meta1 small{display:block;font-size:7.5px;color:#8996a0;font-weight:800;text-transform:uppercase;margin-bottom:3px}
+.final-meta1 strong{font-size:13px}
+
 .final-box{margin-top:14px;padding:12px;border:1px solid #dfe6ea;border-radius:7px}
 .final-row{display:flex;justify-content:space-between;gap:15px;padding:7px 0;border-bottom:1px dashed #d7dee3;font-size:8.8px}
 .final-row:last-child{border-bottom:0}
@@ -4876,16 +4885,20 @@ button{
                 <strong id="frPD">—</strong>
               </div>
 
-              <div>
+              <!-- <div>
+                <small>Received Date</small>
+                <strong id="frPP">—</strong>
+              </div> -->
+            </div>
+
+            <div class="final-meta1">
+               <div>
                 <small>Received From</small>
                 <strong id="frPC">—</strong>
               </div>
-
-              <div>
-                <small>Received Date</small>
-                <strong id="frPP">—</strong>
-              </div>
             </div>
+
+           
 
             <div class="final-box">
               <div class="final-row">
@@ -4898,9 +4911,14 @@ button{
                 <strong id="frPM">Cash</strong>
               </div>
 
-              <div class="final-row">
+              <!-- <div class="final-row">
                 <span>Reference No.</span>
                 <strong id="frPR">—</strong>
+              </div> -->
+
+              <div class="final-row">
+                <span>Received Date.</span>
+                <strong id="frPP">—</strong>
               </div>
 
               <div class="final-row">
