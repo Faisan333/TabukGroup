@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persian Text Editor</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f3f5f8;color:#252b36}
+.app{max-width:1200px;margin:30px auto;padding:0 20px}
+.header{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:20px}
+.logo{font-size:25px;font-weight:750;color:#1677d2}
+.subtitle{color:#7a8493;font-size:13px;margin-top:5px}
+button,select,input{font:inherit}
+button{border:1px solid #dce2e9;background:white;padding:9px 12px;border-radius:7px;cursor:pointer}
+button:hover{background:#eaf3ff;border-color:#9bc6fa}
+.primary{background:#1677d2;color:white;border-color:#1677d2}
+.primary:hover{background:#0964b8;color:white}
+.editor-card{background:white;border:1px solid #e0e5ec;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px #24334a0b}
+.document-title{padding:18px 22px;border:0;border-bottom:1px solid #edf0f4;width:100%;font-size:20px;font-weight:600;outline:none}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:12px;background:#fafbfd;border-bottom:1px solid #e5e9ef}
+.toolbar select{padding:9px;border:1px solid #dce2e9;border-radius:7px;background:white;max-width:150px}
+.toolbar input[type=color]{width:36px;height:36px;border:0;background:transparent;cursor:pointer}
+.separator{width:1px;height:27px;background:#dfe4eb;margin:0 3px}
+#editor{min-height:520px;padding:40px;outline:none;font-family:Tahoma,Arial,sans-serif;font-size:16px;line-height:2;direction:rtl;text-align:right;overflow-wrap:anywhere}
+#editor:empty:before{content:"متن خود را اینجا بنویسید...";color:#a3acb9;pointer-events:none}
+#editor img{max-width:100%;height:auto}
+.footer{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 20px;border-top:1px solid #edf0f4;color:#788392;font-size:13px;flex-wrap:wrap}
+.footer-actions{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:600px){.app{margin:12px auto;padding:0 8px}#editor{padding:22px;min-height:400px}.toolbar{gap:5px}}
+@media print{body{background:white}.header,.toolbar,.footer,.document-title{display:none!important}.app{margin:0;padding:0;max-width:none}.editor-card{border:none;box-shadow:none}#editor{padding:0;min-height:auto}}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header class="header">
+    <div>
+        <div class="logo">✎ Persian Text Editor</div>
+        <div class="subtitle">ویرایشگر متن فارسی | محیطی ساده و حرفه‌ای</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="newDocument()">＋ سند جدید</button>
+        <button onclick="window.print()">چاپ / PDF</button>
+        <button class="primary" onclick="saveHTML()">↓ ذخیره HTML</button>
+    </div>
+</header>
+
+<main class="editor-card">
+    <input id="docTitle" class="document-title" value="استراتژی‌های کنترل و پایه‌های قدرت" placeholder="عنوان سند">
+
+    <div class="toolbar">
+        <select onchange="setFont(this.value)" title="فونت">
+            <option value="Tahoma">Tahoma</option>
+            <option value="Arial">Arial</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Times New Roman">Times New Roman</option>
+        </select>
+
+        <select onchange="format('fontSize',this.value)" title="اندازه فونت">
+            <option value="2">10</option>
+            <option value="3">12</option>
+            <option value="4" selected>14</option>
+            <option value="5">18</option>
+            <option value="6">24</option>
+            <option value="7">36</option>
+        </select>
+
+        <span class="separator"></span>
+        <button onclick="format('bold')" title="Bold"><b>B</b></button>
+        <button onclick="format('italic')" title="Italic"><i>I</i></button>
+        <button onclick="format('underline')" title="Underline"><u>U</u></button>
+        <button onclick="format('strikeThrough')" title="Strikethrough"><s>S</s></button>
+
+        <span class="separator"></span>
+        <label title="رنگ متن">A <input type="color" value="#252b36" onchange="format('foreColor',this.value)"></label>
+        <label title="رنگ پس‌زمینه متن">H <input type="color" value="#fff176" onchange="format('hiliteColor',this.value)"></label>
+
+        <span class="separator"></span>
+        <button onclick="format('justifyRight')" title="راست‌چین">راست‌چین</button>
+        <button onclick="format('justifyCenter')" title="وسط‌چین">وسط‌چین</button>
+        <button onclick="format('justifyLeft')" title="چپ‌چین">چپ‌چین</button>
+
+        <span class="separator"></span>
+        <button onclick="format('insertUnorderedList')">• فهرست</button>
+        <button onclick="format('insertOrderedList')">۱. شماره‌گذاری</button>
+
+        <select onchange="if(this.value){format('formatBlock',this.value);this.value=''}">
+            <option value="">نوع متن</option>
+            <option value="H1">عنوان ۱</option>
+            <option value="H2">عنوان ۲</option>
+            <option value="H3">عنوان ۳</option>
+            <option value="P">پاراگراف</option>
+            <option value="BLOCKQUOTE">نقل‌قول</option>
+        </select>
+
+        <span class="separator"></span>
+        <button onclick="format('undo')">↶ بازگشت</button>
+        <button onclick="format('redo')">↷ تکرار</button>
+        <button onclick="format('removeFormat')">حذف قالب‌بندی</button>
+    </div>
+
+    <div id="editor" contenteditable="true" spellcheck="true" dir="rtl">
+        <p>با توجه به آگاهی‌تان از «استراتژی‌های کنترل» و «پایه‌های قدرت»، تجربه‌های خود را در ماه گذشته به اشتراک بگذارید:</p>
+
+        <p><strong>۱.</strong> در چه موقعیت‌هایی از زندگی‌تان تحت تأثیر استراتژی‌های کنترل بوده‌اید؟ کدام‌یک از نقش‌های زورگو، بازپرس، حاشیه‌نشین، قربانی یا دلقک در رفتار شما پررنگ‌تر بوده است؟</p>
+
+        <p><strong>۲.</strong> در چه موقعیت‌هایی بر پایه‌های قدرت رفتار کرده‌اید؟ این شیوهٔ رفتار چه تأثیری بر زندگی و روابط شما داشته است؟</p>
+
+        <p><strong>۳.</strong> همین حالا که تجربه‌هایتان را به اشتراک می‌گذارید، فکر می‌کنید بر پایه‌های قدرت هستید یا تحت تأثیر یکی از استراتژی‌های کنترل قرار دارید؟</p>
+
+        <p>اگر فرد متوجه شد که تحت تأثیر استراتژی‌های کنترل است، از او بپرسید:</p>
+
+        <p><strong>«فکر می‌کنید در این لحظه کدام‌یک از استراتژی‌های کنترل بر شما غالب است؟</strong></p>
+    </div>
+
+    <div class="footer">
+        <div>
+            <span id="wordCount">0 کلمه</span>
+            &nbsp; · &nbsp;
+            <span id="charCount">0 نویسه</span>
+            &nbsp; · &nbsp;
+            <span id="saveStatus">آماده</span>
+        </div>
+        <div class="footer-actions">
+            <button onclick="saveTXT()">ذخیره TXT</button>
+            <button onclick="selectAllText()">انتخاب همه</button>
+        </div>
+    </div>
+</main>
+</div>
+
+<script>
+const editor=document.getElementById('editor');
+const titleInput=document.getElementById('docTitle');
+const saveStatus=document.getElementById('saveStatus');
+
+function format(command,value=null){
+    editor.focus();
+    document.execCommand(command,false,value);
+    updateCounts();
+}
+
+function setFont(font){
+    editor.focus();
+    document.execCommand('fontName',false,font);
+}
+
+function updateCounts(){
+    const text=editor.innerText.trim();
+    const words=text?text.split(/\s+/).length:0;
+    document.getElementById('wordCount').textContent=words+' کلمه';
+    document.getElementById('charCount').textContent=editor.innerText.length+' نویسه';
+    saveStatus.textContent='در حال ویرایش';
+}
+
+editor.addEventListener('input',updateCounts);
+
+function filename(ext){
+    return (titleInput.value.trim()||'Persian Document')
+        .replace(/[\\/:*?"<>|]/g,'-')+ext;
+}
+
+function download(content,name,type){
+    const blob=new Blob([content],{type:type});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=name;
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    saveStatus.textContent='ذخیره شد';
+}
+
+function saveHTML(){
+    const title=titleInput.value.trim()||'Persian Document';
+    const html='<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+
+        escapeHTML(title)+'</title><style>body{font-family:Tahoma,Arial,sans-serif;direction:rtl;text-align:right;line-height:2;max-width:900px;margin:40px auto;padding:20px}img{max-width:100%}</style></head><body>'+
+        editor.innerHTML+'</body></html>';
+    download(html,filename('.html'),'text/html;charset=utf-8');
+}
+
+function saveTXT(){
+    download(editor.innerText,filename('.txt'),'text/plain;charset=utf-8');
+}
+
+function escapeHTML(text){
+    return text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function selectAllText(){
+    editor.focus();
+    const range=document.createRange();
+    range.selectNodeContents(editor);
+    const selection=window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+}
+
+function newDocument(){
+    if(editor.innerText.trim()&&!confirm('آیا می‌خواهید سند جدیدی ایجاد کنید؟ متن ذخیره‌نشده حذف می‌شود.'))return;
+    editor.innerHTML='';
+    titleInput.value='سند بدون عنوان';
+    updateCounts();
+    editor.focus();
+}
+
+updateCounts();
+</script>
+</body>
+</html>
